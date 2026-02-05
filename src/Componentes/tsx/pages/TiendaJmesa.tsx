@@ -3,7 +3,6 @@ import { JuegoM, CatalogoJ } from "../data/JuegoM";
 import { ProductCard, CartCard } from "../components/Cards";
 import { Carrito } from "../data/Carrito";
 import { Pedido } from "../data/Pedidos";
-import { IcSearch } from "../icons/icons";
 import { PedidosPage } from "./PedidosPage";
 import { obtenerProductos, crearPedido, getPedidosByUsuario } from "../../../services/apiJuegos";
 import { DEFAULT_USER_ID } from "../../../services/config";
@@ -75,90 +74,196 @@ function TiendaJmesa() {
   }
 
   return (
-    <div className="h-screen">
-      <header>
-        <nav className="flex justify-between mx-2 p-2">
-          <ul className="flex items-center gap-4">
-            <li>
-              <img src="/files/icons/ic_lines.svg" alt="" className="w-6" />
-            </li>
-            <li>
-              <img
-                src="/files/icons/lg_zacatrus.png"
-                alt="Zacatrus"
-                className="w-20"
-              />
-            </li>
-          </ul>
-          <ul className="flex items-center gap-4">
-            <li onClick={() => setView('pedidos')} className="cursor-pointer">
-              <img src="/files/icons/ic_user.svg" alt="" className="w-8" />
-            </li>
-            <li onClick={() => setView('tienda')} className="cursor-pointer">
-              <img src="/files/icons/ic_cart.svg" alt="" className="w-8" />
-            </li>
-          </ul>
-        </nav>
-      </header>
+    <div className="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300 min-h-screen flex flex-col font-body">
+      {/* Navbar */}
+      <nav className="bg-surface-light dark:bg-surface-dark sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center gap-6">
+              <button className="text-text-main-light dark:text-text-main-dark hover:text-primary transition-colors">
+                <span className="material-icons-outlined text-3xl">menu</span>
+              </button>
+              <a href="#" className="flex items-center gap-3 group">
+                <img
+                  src="/files/icons/lg_zacatrus.png"
+                  alt="Zacatrus"
+                  className="w-20"
+                />
+                <span className="text-2xl font-display font-bold tracking-tight">
+                  Zaca
+                </span>
+              </a>
+            </div>
+            <div className="flex items-center gap-4 sm:gap-6">
 
-      <div className="flex items-center gap-4 p-2 mx-6 rounded-full bg-slate-200">
-        <IcSearch />
-        <p className="text-gray-400">Busca!</p>
-      </div>
-
-      <div className="flex justify-center">
-        <div className="flex flex-col m-2 card">
-          <h2 className="flex justify-center m-2 text-2xl font-bold ">
-            Juegos de Mesa
-          </h2>
-          <div className="grid justify-center grid-cols-3 gap-2 p-2">
-            {juegos.length === 0 ? <p>Cargando juegos...</p> : juegos.map((juego) => (
-              <ProductCard
-                key={juego.id}
-                juego={juego}
-                carrito={carrito}
-                onAddToCart={addToCart}
-              />
-            ))}
+              <button
+                className="flex items-center gap-2 text-text-main-light dark:text-text-main-dark hover:text-primary transition-colors"
+                onClick={() => setView("pedidos")}
+              >
+                <span className="material-icons-outlined text-2xl">
+                  account_circle
+                </span>
+                <span className="hidden md:block text-sm font-medium">
+                  Pedidos
+                </span>
+              </button>
+              <button
+                className="relative p-2 text-text-main-light dark:text-text-main-dark hover:text-primary transition-colors"
+                onClick={() => setView("tienda")}
+              >
+                <span className="material-icons-outlined text-2xl">
+                  shopping_cart
+                </span>
+                <span className="absolute top-0 right-0 h-4 w-4 bg-primary text-white text-[10px] font-bold flex items-center justify-center rounded-full">
+                  {carrito.items.length}
+                </span>
+              </button>
+            </div>
           </div>
         </div>
+      </nav>
 
-        <div className="flex flex-col p-2 m-2 w-100 bg-gray-50 h-100">
-          <h2 className="flex justify-center m-2 text-2xl">Carrito</h2>
-          <div className="flex items-center ">
-            <div>
-              <p className="mb-4 text-xs font-bold">
-                Total: {carrito.getTotalPrice().toFixed(2)}€
-              </p>
+      {/* Search Bar Section */}
+      <div className="bg-surface-light dark:bg-surface-dark border-b border-gray-200 dark:border-gray-700 py-6 transition-colors duration-300">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <span className="material-icons-outlined text-text-muted-light dark:text-text-muted-dark group-focus-within:text-primary transition-colors">
+                search
+              </span>
             </div>
-            <button
-              className="w-20 p-2 m-2 text-xs text-white rounded-lg bg-blue-500 hover:bg-blue-400/80"
-              onClick={handleBuy}
-            >
-              Comprar
-            </button>
+            <input
+              type="text"
+              className="block w-full pl-12 pr-4 py-4 rounded-2xl border-none ring-1 ring-gray-200 dark:ring-gray-700 bg-gray-50 dark:bg-gray-800 text-text-main-light dark:text-text-main-dark placeholder-text-muted-light dark:placeholder-text-muted-dark focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-gray-800 transition-all shadow-sm"
+              placeholder="Busca juegos, expansiones o accesorios..."
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4 overflow-y-auto  h-[50vh]">
-            {carrito.items.length === 0 ? (
-              <p className="text-gray-500">Carrito vacío</p>
-            ) : (
-              carrito.items.map((item) => (
-                <CartCard
-                  key={item.juego.id}
-                  ItemCarritoJ={item}
-                  onRemoveFromCart={removeFromCart}
-                />
-              ))
-            )}
-          </div>
-          <div className="flex items-center ">
-            <button
-              className="w-20 p-2 m-2 text-xs text-white rounded-lg bg-red-500/80 hover:bg-red-400/80"
-              onClick={clearCart}
-            >
-              Eliminar carrito
-            </button>
-          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Product Grid */}
+          <main className="flex-grow lg:w-3/4">
+            <div className="flex justify-between items-end mb-8">
+              <h1 className="text-3xl font-display font-bold text-text-main-light dark:text-text-main-dark">
+                Juegos de Mesa
+              </h1>
+              {/* Filter tabs example */}
+              <div className="hidden sm:flex gap-2 text-sm font-medium text-text-muted-light dark:text-text-muted-dark">
+                <button className="hover:text-primary transition-colors">
+                  Populares
+                </button>
+                <span>/</span>
+                <button className="hover:text-primary transition-colors">
+                  Nuevos
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {juegos.length === 0 ? (
+                <p className="col-span-full text-center py-10 text-text-muted-light">
+                  Cargando juegos...
+                </p>
+              ) : (
+                juegos.map((juego) => (
+                  <ProductCard
+                    key={juego.id}
+                    juego={juego}
+                    carrito={carrito}
+                    onAddToCart={addToCart}
+                  />
+                ))
+              )}
+            </div>
+          </main>
+
+          {/* Sidebar / Cart */}
+          <aside className="lg:w-1/4">
+            <div className="sticky top-24 bg-white dark:bg-surface-dark rounded-2xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-display font-bold text-text-main-light dark:text-text-main-dark">
+                  Carrito
+                </h2>
+                <span className="bg-gray-100 dark:bg-gray-700 text-xs font-bold px-2 py-1 rounded text-text-muted-light dark:text-text-muted-dark">
+                  {carrito.items.length} items
+                </span>
+              </div>
+
+              {carrito.items.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-xl mb-6">
+                  <span className="material-icons-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">
+                    shopping_bag
+                  </span>
+                  <p className="text-text-muted-light dark:text-text-muted-dark text-sm">
+                    Tu carrito está vacío
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 mb-6 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                  {carrito.items.map((item) => (
+                    <CartCard
+                      key={item.juego.id}
+                      ItemCarritoJ={item}
+                      onRemoveFromCart={removeFromCart}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between text-sm text-text-muted-light dark:text-text-muted-dark">
+                  <span>Subtotal</span>
+                  <span>{carrito.getTotalPrice().toFixed(2)} €</span>
+                </div>
+                <div className="pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                  <span className="font-bold text-lg text-text-main-light dark:text-text-main-dark">
+                    Total
+                  </span>
+                  <span className="font-bold text-2xl text-text-main-light dark:text-text-main-dark">
+                    {carrito.getTotalPrice().toFixed(2)} €
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  className="w-full bg-primary hover:bg-secondary text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleBuy}
+                  disabled={carrito.items.length === 0}
+                >
+                  Comprar
+                </button>
+                <button
+                  className="w-full bg-red-50 dark:bg-red-900/10 text-danger hover:bg-red-100 dark:hover:bg-red-900/20 font-medium py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                  onClick={clearCart}
+                  disabled={carrito.items.length === 0}
+                >
+                  <span className="material-icons-outlined text-sm">
+                    delete_outline
+                  </span>
+                  Eliminar carrito
+                </button>
+              </div>
+
+              <div className="mt-8 flex justify-center gap-4 text-gray-300 dark:text-gray-600">
+                <span className="material-icons-outlined" title="Pago Seguro">
+                  lock
+                </span>
+                <span
+                  className="material-icons-outlined"
+                  title="Envío Rápido"
+                >
+                  local_shipping
+                </span>
+                <span className="material-icons-outlined" title="Garantía">
+                  verified
+                </span>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
